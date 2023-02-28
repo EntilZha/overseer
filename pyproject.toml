@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "overseer"
+version = "0.1.0"
+description = ""
+authors = ["Pedro Rodriguez <par@fb.com>"]
+readme = "README.md"
+packages = [{include = "overseer"}]
+
+[tool.poetry.dependencies]
+python = ">=3.9,!=3.9.7,<3.12"
+rich = "^12.4.1"
+typer = "^0.6.0"
+altair = "^4.2.2"
+polars = {extras = ["fsspec", "pandas", "pyarrow"], version = "^0.16.9"}
+streamlit = "^1.19.0"
+pandas = "^1.5.3"
+pedroai = "^0.4.1"
+streamlit-autorefresh = "^0.0.1"
+
+
+[tool.poetry.group.dev.dependencies]
+ipython = "^8.10.0"
+pudb = "^2022.1.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
