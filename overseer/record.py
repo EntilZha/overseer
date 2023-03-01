@@ -62,7 +62,7 @@ def get_gpu_stats():
         rows = out.stdout.decode()
         df = pl.read_csv(io.StringIO(rows))
         return df
-    except (subprocess.CalledProcessError, FileNotFoundError):
+    except:
         return None
 
 
