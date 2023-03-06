@@ -44,6 +44,8 @@ To visualize cluster stats, simply run
 streamlit run overseer/monitor.py
 ```
 
+![Streamlit UI](streamlit-ui.png)
+
 ## Installation
 
 1. (Optional) Create an anaconda/minconda environment and activate it.
