@@ -123,6 +123,7 @@ def collect_stats(stats_dir: Path):
 with st.sidebar:
     STATS_ENV = os.environ.get('OVERSEER_STATS_ROOT', '')
     STATS_ROOT = Path(st.text_input('Root Path', STATS_ENV))
+    sample_points = st.checkbox("Sample Points", value=True)
     stats_dict = collect_stats(STATS_ROOT)
     hostnames = stats_dict['hostnames']
     slurm_jobs = stats_dict['slurm_jobs']
@@ -158,9 +159,12 @@ for g in selected_groups:
     for scale in ['Percent (%)', 'Gigabytes (GB)']:
         chart_df = melt_sys_df[(melt_sys_df["metric_group"] == g) & (melt_sys_df["scale"] == scale)]
         if len(chart_df) > 0:
+            if sample_points:
+                base_chart = alt.Chart(chart_df.sample(1_000)).mark_point()
+            else:
+                base_chart = alt.Chart(chart_df).mark_line()
             chart = (
-                alt.Chart(chart_df)
-                .mark_line()
+                base_chart
                 .encode(
                     x="datetime",
                     y=alt.Y("value", title=scale),
