@@ -2,6 +2,7 @@ import re
 import os
 from pathlib import Path
 import altair as alt
+import pyarrow
 import pandas as pd
 import streamlit as st
 
@@ -59,34 +60,46 @@ def collect_stats(stats_dir: Path):
     local_system_stats_files = Path(stats_dir).glob('*/system.feather')
     
     for f in local_system_stats_files:
-        df = pd.read_feather(f)
-        df['job'] = 'local'
-        system_frames.append(df)
-        hostnames.add(f.parent.name)
+        try:
+            df = pd.read_feather(f)
+            df['job'] = 'local'
+            system_frames.append(df)
+            hostnames.add(f.parent.name)
+        except pyarrow.lib.ArrowInvalid:
+            st.warning("Skipping invalid file: %s", f)
 
     local_gpu_stats_files = Path(stats_dir).glob('*/gpu.feather')
     for f in local_gpu_stats_files:
-        df = pd.read_feather(f)
-        df['job'] = 'local'
-        gpu_frames.append(df)
-        hostnames.add(f.parent.name)
+        try:
+            df = pd.read_feather(f)
+            df['job'] = 'local'
+            gpu_frames.append(df)
+            hostnames.add(f.parent.name)
+        except pyarrow.lib.ArrowInvalid:
+            st.warning("Skipping invalid file: %s", f)
 
     slurm_jobs = set()
     slurm_system_stats_files = Path(stats_dir).glob("*/slurm_*/system.feather")
     for f in slurm_system_stats_files:
-        df = pd.read_feather(f)
-        df['job'] = f.parent.name
-        slurm_jobs.add(parse_job_id(f.parent.name))
-        system_frames.append(df)
-        hostnames.add(f.parent.parent.name)
+        try:
+            df = pd.read_feather(f)
+            df['job'] = f.parent.name
+            slurm_jobs.add(parse_job_id(f.parent.name))
+            system_frames.append(df)
+            hostnames.add(f.parent.parent.name)
+        except pyarrow.lib.ArrowInvalid:
+            st.warning("Skipping invalid file: %s", f)
 
     slurm_gpu_stats_files = Path(stats_dir).glob("*/slurm_*/gpu.feather")
     for f in slurm_gpu_stats_files:
-        df = pd.read_feather(f)
-        slurm_jobs.add(parse_job_id(f.parent.name))
-        df['job'] = f.parent.name
-        gpu_frames.append(df)
-        hostnames.add(f.parent.parent.name)
+        try:
+            df = pd.read_feather(f)
+            slurm_jobs.add(parse_job_id(f.parent.name))
+            df['job'] = f.parent.name
+            gpu_frames.append(df)
+            hostnames.add(f.parent.parent.name)
+        except pyarrow.lib.ArrowInvalid:
+            st.warning("Skipping invalid file: %s", f)
     
     if len(system_frames) > 0:
         system_df = pd.concat(system_frames)
@@ -108,7 +121,7 @@ def collect_stats(stats_dir: Path):
 
 
 with st.sidebar:
-    STATS_ENV = os.environ.get('OVERSEER_STATS_ROOT', '/checkpoint/par/overseer')
+    STATS_ENV = os.environ.get('OVERSEER_STATS_ROOT', '')
     STATS_ROOT = Path(st.text_input('Root Path', STATS_ENV))
     stats_dict = collect_stats(STATS_ROOT)
     hostnames = stats_dict['hostnames']

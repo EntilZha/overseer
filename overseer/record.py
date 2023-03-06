@@ -5,7 +5,6 @@ import subprocess
 import socket
 import os
 import datetime
-import psutil
 import numpy as np
 import polars as pl
 import io

@@ -14,8 +14,8 @@ altair = "^4.2.2"
 polars = {extras = ["fsspec", "pandas", "pyarrow"], version = "^0.16.9"}
 streamlit = "^1.19.0"
 pandas = "^1.5.3"
-pedroai = "^0.4.1"
 streamlit-autorefresh = "^0.0.1"
+psutil = "^5.9.4"
 
 
 [tool.poetry.group.dev.dependencies]
