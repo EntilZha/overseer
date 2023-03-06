@@ -66,7 +66,7 @@ def collect_stats(stats_dir: Path):
             system_frames.append(df)
             hostnames.add(f.parent.name)
         except pyarrow.lib.ArrowInvalid:
-            st.warning("Skipping invalid file: %s", f)
+            st.warning(f"Skipping invalid file: {f}")
 
     local_gpu_stats_files = Path(stats_dir).glob('*/gpu.feather')
     for f in local_gpu_stats_files:
@@ -76,7 +76,7 @@ def collect_stats(stats_dir: Path):
             gpu_frames.append(df)
             hostnames.add(f.parent.name)
         except pyarrow.lib.ArrowInvalid:
-            st.warning("Skipping invalid file: %s", f)
+            st.warning(f"Skipping invalid file: {f}")
 
     slurm_jobs = set()
     slurm_system_stats_files = Path(stats_dir).glob("*/slurm_*/system.feather")
@@ -88,7 +88,7 @@ def collect_stats(stats_dir: Path):
             system_frames.append(df)
             hostnames.add(f.parent.parent.name)
         except pyarrow.lib.ArrowInvalid:
-            st.warning("Skipping invalid file: %s", f)
+            st.warning(f"Skipping invalid file: {f}")
 
     slurm_gpu_stats_files = Path(stats_dir).glob("*/slurm_*/gpu.feather")
     for f in slurm_gpu_stats_files:
@@ -99,7 +99,7 @@ def collect_stats(stats_dir: Path):
             gpu_frames.append(df)
             hostnames.add(f.parent.parent.name)
         except pyarrow.lib.ArrowInvalid:
-            st.warning("Skipping invalid file: %s", f)
+            st.warning(f"Skipping invalid file: {f}")
     
     if len(system_frames) > 0:
         system_df = pd.concat(system_frames)
